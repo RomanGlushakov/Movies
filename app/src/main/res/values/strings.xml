@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Movies</string>
+    <string name="loading_error">Ошибка загрузки</string>
+    <string name="favorite_movies">Favorite Movies</string>
+</resources>
