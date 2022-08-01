@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,6 +39,8 @@ public class MovieDetailActivity extends AppCompatActivity {
     private TrailersAdapter trailersAdapter;
     private ReviewsAdapter reviewsAdapter;
     private RecyclerView recyclerViewReviews;
+    private RecyclerView recyclerViewActors;
+    private ActorsAdapter actorsAdapter;
 
     MovieDetailViewModel viewModel;
 
@@ -56,6 +59,9 @@ public class MovieDetailActivity extends AppCompatActivity {
         reviewsAdapter = new ReviewsAdapter();
         recyclerViewReviews.setAdapter(reviewsAdapter);
 
+        actorsAdapter = new ActorsAdapter();
+        recyclerViewActors.setAdapter(actorsAdapter);
+
 
         trailersAdapter.setOnTrailerClickListener(new TrailersAdapter.OnTrailerClickListener() {
             @Override
@@ -67,6 +73,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         });
 
         Movie movie = (Movie) getIntent().getSerializableExtra(EXTRA_MOVIE);
+
         Glide.with(this).
                 load(movie.getPoster().
                         getUrl()).into(imageViewPoster);
@@ -74,11 +81,20 @@ public class MovieDetailActivity extends AppCompatActivity {
         textViewYear.setText(String.valueOf(movie.getYear()));
         textViewDescription.setText(movie.getDescription());
 
+        viewModel.loadActorsPhoto(movie.getId());
+        viewModel.getActors().observe(this, new Observer<List<Actor>>() {
+            @Override
+            public void onChanged(List<Actor> actors) {
+                actorsAdapter.setActors(actors);
+            }
+        });
+
         viewModel.loadTrailers(movie.getId());
         viewModel.getTrailers().observe(this, new Observer<List<Trailer>>() {
             @Override
             public void onChanged(List<Trailer> trailers) {
                 trailersAdapter.setTrailers(trailers);
+
 
             }
         });
@@ -87,6 +103,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         viewModel.getReviews().observe(this, new Observer<List<Review>>() {
             @Override
             public void onChanged(List<Review> reviews) {
+                Log.d(TAG, "Отзывы загружены");
                 reviewsAdapter.setReviews(reviews);
             }
         });
@@ -130,6 +147,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         recyclerViewTrailers = findViewById(R.id.recyclerViewTrailers);
         recyclerViewReviews = findViewById(R.id.recyclerViewReviews);
         imageViewStar = findViewById(R.id.imageViewStar);
+        recyclerViewActors = findViewById(R.id.recyclerViewActors);
 
     }
 

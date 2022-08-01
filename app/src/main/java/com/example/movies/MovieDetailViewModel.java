@@ -20,13 +20,20 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MovieDetailViewModel extends AndroidViewModel {
 
+
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
+
     private final MutableLiveData<List<Trailer>>  trailers = new MutableLiveData<>();
     private final MutableLiveData<List<Review>>  reviews = new MutableLiveData<>();
+    private final MutableLiveData<List<Actor>>  actors = new MutableLiveData<>();
     private static final String TAG = "MovieDetailViewModel";
-    CompositeDisposable compositeDisposable = new CompositeDisposable();
+
 
     private final MoviesDao moviesDao;
 
+    public LiveData<List<Actor>> getActors() {
+        return actors;
+    }
     public LiveData<List<Trailer>> getTrailers() {
         return trailers;
     }
@@ -36,6 +43,7 @@ public class MovieDetailViewModel extends AndroidViewModel {
     public LiveData<Movie> getFavoriteMovie(int movieId) {
         return moviesDao.getFavoriteMovie(movieId);
     }
+
 
     public MovieDetailViewModel(@NonNull Application application) {
         super(application);
@@ -127,6 +135,26 @@ public class MovieDetailViewModel extends AndroidViewModel {
                     }
                 });
         compositeDisposable.add(disposable);
+    }
+
+    public void loadActorsPhoto (int id) {
+        Disposable disposable = ApiFactory.apiService.loadActors(id).
+                subscribeOn(Schedulers.io()).
+                observeOn((AndroidSchedulers.mainThread())).
+                subscribe(new Consumer<ActorResponse>() {
+                    @Override
+                    public void accept(ActorResponse actorResponse) throws Throwable {
+                            actors.setValue(actorResponse.getPersons());
+
+
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Throwable {
+                        Log.d(TAG, throwable.toString());
+                    }
+                });
+                compositeDisposable.add(disposable);
     }
 
     @Override

@@ -15,6 +15,8 @@ public interface ApiService {
     @GET("https://api.kinopoisk.dev/review?token=XV8WR69-PEBMFSV-PQ9MZEE-4WTETSA&field=movieId")
     Single<ReviewResponse> loadReviews(@Query("search") int id);
 
+    @GET("movie?token=XV8WR69-PEBMFSV-PQ9MZEE-4WTETSA&field=id")
+    Single<ActorResponse> loadActors(@Query("search") int id);
 
 
 

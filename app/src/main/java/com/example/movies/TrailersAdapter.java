@@ -47,6 +47,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
             }
         });
 
+
     }
 
     @Override
